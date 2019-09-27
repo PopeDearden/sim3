@@ -22,7 +22,7 @@ class Dash extends Component {
   }
   grabPosts() {
     let { search, myPosts } = this.state;
-    let url = '/api/v2/posts';
+    let url = '/api/posts';
     if (myPosts && !search) {
       url += '?mine=true';
     } else if (!myPosts && search) {
@@ -37,7 +37,7 @@ class Dash extends Component {
   }
   reset() {
     let { myPosts } = this.state;
-    let url = '/api/v2/posts';
+    let url = '/api/posts';
     if (myPosts) {
       url += '?mine=true';
     }
@@ -61,10 +61,10 @@ class Dash extends Component {
     return (
       <div className='Dash'>
           Form
-        {/* <div className='content_box dash_filter'>
+        <div className='content_box dash_filter'>
           <div className='dash_search_box'>
             <input value={this.state.search} onChange={e => this.setState({ search: e.target.value })} className='dash_search_bar' placeholder='Search by Title' />
-            <img onClick={this.grabPosts} className='dash_search_button' src={searchLogo} alt='search' />
+            <img onClick={this.grabPosts} className='dash_search_button' src='' alt='search' />
             <button onClick={this.reset} className='dark_button' id='dash_reset'>Reset</button>
           </div>
           <div className='dash_check_box'>
@@ -82,7 +82,7 @@ class Dash extends Component {
               <div className='load'></div>
             </div>
           }
-        </div> */}
+        </div>
       </div>
     );
   }

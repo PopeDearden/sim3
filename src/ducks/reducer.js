@@ -10,7 +10,7 @@ const initialState = {
     let { type, payload } = action;
     switch (type) {
       case UPDATE_USER:
-        return { ...state, username: payload.username, profilePic: payload.profile_pic };
+        return { ...state, username: payload.email, profilePic: payload.email };
       case LOGOUT:
         return initialState;
       default:

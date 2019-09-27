@@ -8,7 +8,7 @@ import { updateUser, logout } from './../../ducks/reducer';
 // import homeLogo from './../../assets/home_logo.png';
 // import newLogo from './../../assets/new_logo.png';
 // import logoutLogo from './../../assets/shut_down.png';
-// import './SideNav.css';
+import './SideNav.css';
 
 class SideNav extends Component {
   constructor(props) {
@@ -16,13 +16,13 @@ class SideNav extends Component {
     this.logout = this.logout.bind(this);
   }
   componentDidMount() {
-    axios.get('/api/v2/auth/me')
-      .then(res => {
-        this.props.updateUser(res.data);
-      })
+    // axios.get('/auth/login')
+    //   .then(res => {
+    //     this.props.updateUser(res.data);
+    //   })
   }
   logout() {
-    axios.post('/api/v2/auth/logout')
+    axios.post('/auth/logout')
       .then(res => this.props.logout())
   }
   render() {
@@ -30,8 +30,8 @@ class SideNav extends Component {
     if (this.props.location.pathname !== '/') {
       return (
         <div className='Nav'>
-          <div className='nav_profile_container'>
-            <div className='nav_profile_pic'></div>
+           <div className='nav_profile_container'>
+            <div className='nav_profile_pic' style={{ backgroundImage: `url('https://robohash.org/${this.props.username}')` }}></div>
             <p>{this.props.username}</p>
           </div>
           <div className='nav_links'>
@@ -54,5 +54,3 @@ function mapStateToProps(state) {
 export default withRouter(connect(mapStateToProps, { updateUser, logout })(SideNav));
 
 
-// WEBPACK FOOTER //
-// ./src/components/side-nav/SideNav.js
