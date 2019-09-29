@@ -1,67 +1,46 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React, { Component } from "react";
+import Axios from "axios";
 
-// import noImage from './../../assets/no_image.jpg';
-// import './Post.css';
-
-class Post extends Component {
+export default class Post extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      author: '',
-      author_pic: '',
-      title: '',
-      img: '',
-      content: '',
-      loading: true
-    }
+      title: "",
+      img: "",
+      content: "",
+      username: "",
+    };
   }
+
   componentDidMount() {
-    axios.get(`/api/post/${this.props.match.params.id}`)
-      .then(res => {
-        setTimeout(_ => this.setState({ ...res.data, loading: false }), 500)
-      })
+    this.getPost()
   }
+
+  async getPost() {
+    const {id} = this.props.match.params
+    const postInfo = await Axios.get(`/api/post/${id}`)
+    const {title, img, content, email} = postInfo.data[0]
+    this.setState({
+      title, img, content, username: email
+    })
+  }
+
   render() {
-    // let imgSrc = this.state.img ? this.state.img : noImage;
+    const { title, img, content, username } = this.state;
+    const profile = 'https://robohash.org/'+ username
     return (
-      <div className='Post content_box'>
-          Post
-        {/* {!this.state.loading && this.state.title
-          ?
-          <div>
-            <div className='post_header'>
-              <h2 className='title'>{this.state.title}</h2>
-              <div className='author_box'>
-                <p>by {this.state.author}</p>
-                <img src={this.state.author_pic} alt='author' />
-              </div>
-            </div>
-            <div className='post_content_box'>
-              <div className='post_img' style={{ backgroundImage: `url('${imgSrc}') ` }} alt='post' ></div>
-              <p>{this.state.content}</p>
-            </div>
-          </div>
-          :
-          !this.state.loading
-            ?
-            <div className='oops_box'>
-              <h2 className='title'>Oops!</h2>
-              <p>Looks like this post doesn't exist anymore</p>
-            </div>
-            :
-            <div className='load_box'>
-              <div className='load_background'></div>
-              <div className='load'></div>
-            </div>
-        } */}
+      <div>
+        <div className="post-info">
+          <h1>{title}</h1>
+          <img src={img} alt="" />
+          <p>{content}</p>
+        </div>
+        <div className="poster">
+          <h2>{username}</h2>
+          <img src={profile} alt={profile}/>
+          <div className='post_profile_pic' style={{ backgroundImage: `url('https://robohash.org/${username}')`}}></div>
+        </div>
       </div>
-    )
+    );
   }
 }
-
-export default Post;
-
-
-// WEBPACK FOOTER //
-// ./src/components/post/Post.js

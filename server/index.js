@@ -17,5 +17,8 @@ app.use(express.json())
 
 app.post('/auth/register', controller.register)
 app.post('/auth/login', controller.login)
+app.get('/api/posts', controller.getAllPosts)
+app.get('/api/post/:id', controller.getPost)
+
 
 app.listen(SERVER_PORT, ()=> console.log(`${SERVER_PORT} wild chickens laying eggs`))

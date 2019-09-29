@@ -15,12 +15,13 @@ VALUES (
 
 
 
--- CREATE TABLE posts (
---     user_id INTEGER,
---     author VARCHAR(100),
---     image TEXT,
---     post TEXT
--- )
+CREATE TABLE posts (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(45),
+    img TEXT,
+    content TEXT,
+    author_id INTEGER REFERENCES users1(user_id)
+);
 
 select users1.user_id, posts.author, posts.post
 from users1

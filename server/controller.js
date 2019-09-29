@@ -26,12 +26,30 @@ module.exports = {
 
 
     },
-    getPosts: (req,res) => {
-        const db = req.app.get('db');
-
-        db.join_tables()
-        .then( posts => res.status(200).send(posts) )
-        .catch(err => res.status(500).send( 'Wrong ,,getAll,, !' ))
-    }
-
+    getAllPosts: async (req, res) => {
+        const { userPosts, id, search } = req.query;
+        // console.log(userPosts, id, search)
+        const db = req.app.get("db");
+        console.log(id)
+        let postsArr = [];
+        if (userPosts === "true" && search) {
+          postsArr = await db.get_all_posts({ search: `%${search}%`, id: "0" });
+        }
+        if (userPosts === "false" && !search) {
+          postsArr = await db.get_all_posts({ search: "%%", id:  id  });
+        }
+        if (userPosts === "false" && search) {
+          postsArr = await db.get_all_posts({ search: `%${search}%`, id:  id  });
+        }
+        if (userPosts === "true" && !search) {
+          postsArr = await db.get_all_posts({ search: "%%", id: "0" });
+        }
+        res.status(200).send(postsArr);
+      },
+      getPost: async (req, res) => {
+        const id = req.params.id
+        const db = req.app.get('db')
+        const post = await db.get_post(id)
+        res.status(200).send(post)
+      },
 }

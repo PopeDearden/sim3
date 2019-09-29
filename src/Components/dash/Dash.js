@@ -1,95 +1,97 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import axios from "axios";
+import {Link} from 'react-router-dom'
 
-// import searchLogo from './../../assets/search_logo.png';
-// import './Dash.css';
-
-class Dash extends Component {
+class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: '',
-      myPosts: true,
-      posts: [],
-      loading: true
-    }
-    this.grabPosts = this.grabPosts.bind(this);
-    this.reset = this.reset.bind(this);
+      searchInput: "",
+      userPosts: true,
+      posts: []
+    };
   }
+
+  handleChange(prop, evt) {
+    this.setState({
+      [prop]: evt.target.value
+    });
+  }
+
   componentDidMount() {
-    this.grabPosts();
+    console.log(this.props.id)
+    this.getPosts();
   }
-  grabPosts() {
-    let { search, myPosts } = this.state;
-    let url = '/api/posts';
-    if (myPosts && !search) {
-      url += '?mine=true';
-    } else if (!myPosts && search) {
-      url += `?search=${search}`;
-    } else if (myPosts && search) {
-      url += `?mine=true&search=${search}`;
-    }
-    axios.get(url)
-      .then(res => {
-        setTimeout(_ => this.setState({ posts: res.data, loading: false }), 500)
-      })
-  }
-  reset() {
-    let { myPosts } = this.state;
-    let url = '/api/posts';
-    if (myPosts) {
-      url += '?mine=true';
-    }
-    axios.get(url)
-      .then(res => {
-        this.setState({ posts: res.data, loading: false, search: '' })
-      })
-  }
-  render() {
-    let posts = this.state.posts.map((el) => {
-      return <Link to={`/post/${el.post_id}`} key={el.post_id}>
-        <div className='content_box dash_post_box'>
-          <h3>{el.title}</h3>
-          <div className='author_box'>
-            <p>by {el.author_username}</p>
-            <img src={el.profile_pic} alt='author' />
-          </div>
-        </div>
-      </Link>
+
+  checkBox() {
+    this.setState({
+      userPosts: !this.state.userPosts
     })
+    console.log('happened')
+  }
+
+  async getPosts() {
+    const { id } = this.props;
+    const { userPosts, searchInput: search } = this.state;
+    let posts = [];
+    let queryString = `/api/posts?id=${id}`
+    if (search !== '') {
+      queryString = queryString + `&search=${search}`
+    }
+    if (userPosts) {
+      queryString = queryString + `&userPosts=true`
+    } else {
+      queryString = queryString + `&userPosts=false`
+    }
+    try {
+      posts = await axios.get(queryString);
+      this.setState({ posts: posts.data });
+    } catch (e) {
+      console.log(e);
+    }
+  console.log(this.state)
+  }
+
+  resetSearch(id) {
+    this.getPosts()
+    this.setState({ searchInput: '' })
+  }
+
+  render() {
     return (
-      <div className='Dash'>
-          Form
-        <div className='content_box dash_filter'>
-          <div className='dash_search_box'>
-            <input value={this.state.search} onChange={e => this.setState({ search: e.target.value })} className='dash_search_bar' placeholder='Search by Title' />
-            <img onClick={this.grabPosts} className='dash_search_button' src='' alt='search' />
-            <button onClick={this.reset} className='dark_button' id='dash_reset'>Reset</button>
-          </div>
-          <div className='dash_check_box'>
-            <p>My Posts</p>
-            <input checked={this.state.myPosts} onChange={_ => this.setState({ myPosts: !this.state.myPosts }, this.grabPosts)} type='checkbox' />
-          </div>
+      <div>
+        <div className="search-bar">
+          <input
+            type="text"
+            onChange={e => this.handleChange("searchInput", e)}
+            value={this.state.searchInput}
+            placeholder="Search by Title"
+          />
+          <button onClick={() => this.getPosts()}>Search</button>
+          <button onClick={() => this.resetSearch()}>Reset</button>
+          <span>
+            My Posts
+            <input type="checkbox" defaultChecked onChange={() => this.checkBox()} />
+          </span>
         </div>
-        <div className='content_box dash_posts_container'>
-          {!this.state.loading
-            ?
-            posts
-            :
-            <div className='load_box'>
-              <div className='load_background'></div>
-              <div className='load'></div>
+        {this.state.posts.map(post => (
+          <Link key={post.id} to={`/post/${post.id}`}>
+            <div className='mini-post'>
+              <h1>{post.title}</h1>
+              <h3>by {post.email}</h3>
+              <img src={post.profile_pic} alt="" />
             </div>
-          }
-        </div>
+          </Link>
+        ))}
       </div>
     );
   }
 }
 
-export default Dash;
+function mapStateToProps(store) {
+  const { id } = store;
+  return { id };
+}
 
-
-// WEBPACK FOOTER //
-// ./src/components/dash/Dash.js
+export default connect(mapStateToProps)(Dashboard);
