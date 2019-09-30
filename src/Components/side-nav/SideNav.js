@@ -16,13 +16,13 @@ class SideNav extends Component {
     this.logout = this.logout.bind(this);
   }
   componentDidMount() {
-    // axios.get('/auth/login')
-    //   .then(res => {
-    //     this.props.updateUser(res.data);
-    //   })
+    axios.get('/api/auth/me')
+      .then(res => {
+        this.props.updateUser(res.data);
+      })
   }
   logout() {
-    axios.post('/auth/logout')
+    axios.post('/api/auth/logout')
       .then(res => this.props.logout())
   }
   render() {

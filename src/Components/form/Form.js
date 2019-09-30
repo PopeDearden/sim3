@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import Axios from 'axios';
+import {connect} from 'react-redux'
 
 // import noImage from './../../assets/no_image.jpg';
 // import './Form.css';
@@ -14,18 +15,19 @@ class Form extends Component {
     };
     this.submit = this.submit.bind(this);
   }
-  submit() {
-      axios.post('/api/v2/post', this.state)
-        .then(res => this.props.history.push('/dashboard'))
-        .catch(err => alert('You must log in to create posts') )
-
-  }
+  async submit() {
+    const id = this.props.id
+    console.log(id)
+    const {title, img, content} = this.state
+    await Axios.post(`/api/post/${id}`, {title, img, content})
+    this.props.history.push('/dashboard')
+}
   render() {
-    // let imgSrc = this.state.img ? this.state.img : noImage;
+    let imgSrc = this.state.img;
     return (
       <div className='Form content_box'>
           Form
-        {/* <h2 className='title'>New Post</h2>
+        <h2 className='title'>New Post</h2>
         <div className='form_input_box'>
           <p>Title:</p>
           <input value={this.state.title} onChange={e => this.setState({ title: e.target.value })} />
@@ -39,14 +41,15 @@ class Form extends Component {
           <p>Content:</p>
           <textarea value={this.state.content} onChange={e => this.setState({ content: e.target.value })} />
         </div>
-        <button onClick={this.submit} className='dark_button form_button'>Post</button> */}
+        <button onClick={this.submit} className='dark_button form_button'>Post</button>
       </div>
     );
   }
 }
+function mapStateToProps(store) {
+  return {
+      id: store.id
+  }
+}
 
-export default Form;
-
-
-// WEBPACK FOOTER //
-// ./src/components/form/Form.js
+export default connect(mapStateToProps)(Form)
